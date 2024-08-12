@@ -3,6 +3,30 @@
 ## Description
 This is a Book Management System implemented in Python using the Quart web framework and SQLAlchemy for asynchronous database interactions. The system allows you to manage books and their reviews through RESTful APIs, with endpoints to create, retrieve, update, and delete both books and reviews.
 
+## Docker [Easiest Way]
+Build and start your containers
+```
+docker-compose up --build
+```
+
+** Open Swagger URL **
+http://localhost:8000/api/doc
+
+
+Stop and remove the containers
+```
+docker-compose down
+```
+
+## Deployment steps (Use deploy.sh file)
+1. Create an EC2 instance with necessary configurations.
+2. Install dependencies like Docker, Git.
+3. Clone your GitHub repository (https://github.com/mhtkmr74/TechAssignment).
+Build and run the application using Docker.
+Setup security groups, IAM roles, and environment variables.
+
+
+## Local Setup/Setup wihout Docker
 ## Prerequisites
 Before running the application, ensure that the following prerequisites are met:
 
@@ -16,6 +40,7 @@ Before running the application, ensure that the following prerequisites are met:
 
    ```bash
    git clone https://github.com/mhtkmr74/TechAssignment
+   cd TechAssignment
    ```
 
 ## Install Requirements:
