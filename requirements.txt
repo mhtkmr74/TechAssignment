@@ -1,11 +1,14 @@
-Flask
-Flask-SQLAlchemy
 psycopg2-binary
 flasgger
-'sqlalchemy[asyncio]'
+sqlalchemy[asyncio]
 asyncpg
 flask-swag
 swagger-ui-py
 pytest
 pytest-asyncio
 httpx
+sqlalchemy
+quart
+Flask
+Flask-SQLAlchemy
+hypercorn

@@ -3,12 +3,13 @@ from quart import Quart, jsonify, request
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select
-from models import Book, Review
+from models import Book, Review, Base
 from swagger_ui import quart_api_doc
+from config import DATABASE_URL
+from authenticate import requires_auth
 
 app = Quart(__name__)
 
-DATABASE_URL = 'postgresql+asyncpg://postgres@localhost/book_management'
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
 async_session = sessionmaker(
@@ -16,9 +17,17 @@ async_session = sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False
 )
+
 quart_api_doc(app, config_path='./static/openapi.yaml', url_prefix='/api/doc', title='API doc')
 
+
+@app.before_serving
+async def create_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
 @app.route('/books', methods=['POST'])
+@requires_auth
 async def add_book():
     data = await request.get_json()
     async with async_session() as session:
@@ -43,6 +52,7 @@ async def add_book():
 
 
 @app.route('/books', methods=['GET'])
+@requires_auth
 async def get_books():
     async with async_session() as session:
         result = await session.execute(select(Book))
@@ -58,6 +68,7 @@ async def get_books():
 
 
 @app.route('/books/<int:id>', methods=['GET'])
+@requires_auth
 async def get_book(id):
     async with async_session() as session:
         result = await session.execute(select(Book).filter(Book.id == id))
@@ -75,6 +86,7 @@ async def get_book(id):
             return jsonify({'error': 'Book not found'}), 404
 
 @app.route('/books/<int:id>', methods=['PUT'])
+@requires_auth
 async def update_book(id):
     data = await request.get_json()
     async with async_session() as session:
@@ -99,6 +111,7 @@ async def update_book(id):
         })
 
 @app.route('/books/<int:id>', methods=['DELETE'])
+@requires_auth
 async def delete_book(id):
     async with async_session() as session:
         async with session.begin():
@@ -112,6 +125,7 @@ async def delete_book(id):
         return '', 204
 
 @app.route('/books/<int:id>/reviews', methods=['POST'])
+@requires_auth
 async def add_review(id):
     data = await request.get_json()
     async with async_session() as session:
@@ -137,6 +151,7 @@ async def add_review(id):
         }), 201
 
 @app.route('/books/<int:id>/reviews', methods=['GET'])
+@requires_auth
 async def get_reviews(id):
     async with async_session() as session:
         result = await session.execute(select(Review).filter(Review.book_id == id))

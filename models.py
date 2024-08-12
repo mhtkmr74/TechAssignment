@@ -1,30 +1,32 @@
 from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, create_engine
+from sqlalchemy.orm import relationship, sessionmaker
 
-# Base = declarative_base()
-db = SQLAlchemy()
+Base = declarative_base()
+# db = SQLAlchemy()
 
-class Book(db.Model):
+class Book(Base):
     __tablename__ = 'books'
 
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    author = db.Column(db.String(255), nullable=False)
-    genre = db.Column(db.String(100))
-    year_published = db.Column(db.Integer)
-    summary = db.Column(db.Text)
+    id = Column(Integer, primary_key=True)
+    title = Column(String(255), nullable=False)
+    author = Column(String(255), nullable=False)
+    genre = Column(String(100))
+    year_published = Column(Integer)
+    summary = Column(Text)
 
-    reviews = db.relationship('Review', backref='book', lazy=True, cascade="all, delete-orphan")
+    reviews = relationship('Review', backref='book', lazy=True, cascade="all, delete-orphan")
 
 
-class Review(db.Model):
+class Review(Base):
     __tablename__ = 'reviews'
 
-    id = db.Column(db.Integer, primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
-    review_text = db.Column(db.Text)
-    rating = db.Column(db.Integer, nullable=False)
+    id = Column(Integer, primary_key=True)
+    book_id = Column(Integer, ForeignKey('books.id'), nullable=False)
+    user_id = Column(Integer, nullable=False)
+    review_text = Column(Text)
+    rating = Column(Integer, nullable=False)
 
     def __repr__(self):
         return f'<Review {self.id} - Book {self.book_id} - Rating {self.rating}>'
