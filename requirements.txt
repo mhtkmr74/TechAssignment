@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+psycopg2-binary
+flasgger
+'sqlalchemy[asyncio]'
+asyncpg
+flask-swag
+swagger-ui-py
+pytest
+pytest-asyncio
+httpx
